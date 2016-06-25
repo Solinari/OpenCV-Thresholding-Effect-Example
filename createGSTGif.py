@@ -11,6 +11,10 @@ import os
 import cv2
 import numpy as np
 
+# need these 2 to do the gif transform. cv2 lacks this file extension..
+from PIL import Image, ImageSequence
+from images2gif import writeGif
+
 # flags: 1-color, 0-greyscale, -1-alphachannel
 cvImGrey = cv2.imread(os.path.abspath(argv[1]), 0)
 
@@ -24,7 +28,7 @@ def binaryThresholdByValue(x, img):
 	if 0 <= x < 256:
 		try:
 			ret, mask = cv2.threshold(img, x, x, cv2.THRESH_BINARY)
-			return mask
+			return Image.fromarray(np.asarray(mask))
 		except Exception as e:
 			print "Error: {}".format(e)
 		
@@ -34,13 +38,21 @@ def binaryThresholdByValue(x, img):
 def getArrayOfThresholdMasks(img):
 	'''returns array of masks'''
 
-	return np.ndarray((256,), dtype=type(img),
-		              buffer=np.array([binaryThresholdByValue(x, img) for x in range(256)]))
+	return [binaryThresholdByValue(x, img) for x in range(256)]
+
+def threshToGif(imgName, thresholds):
+	'''write a gif!'''
+
+	writeGif(imgName, thresholds, duration=0.05)
 
 
 thresholds = getArrayOfThresholdMasks(cvImGrey)
 
-print "Number of objects in thresholds: {}".format(thresholds.size)
+threshToGif(argv[1].split('.')[0] + '.gif', thresholds)
+
+# tests
+# print "Number of objects in thresholds: {}".format(len(thresholds))
+# print(thresholds)
 
 # cv2.imshow("Test01",cvImGrey)
 # cv2.waitKey(0)
