@@ -49,11 +49,3 @@ def threshToGif(imgName, thresholds):
 thresholds = getArrayOfThresholdMasks(cvImGrey)
 
 threshToGif(argv[1].split('.')[0] + '.gif', thresholds)
-
-# tests
-# print "Number of objects in thresholds: {}".format(len(thresholds))
-# print(thresholds)
-
-# cv2.imshow("Test01",cvImGrey)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
