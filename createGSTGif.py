@@ -1,0 +1,47 @@
+# Greyscale threshold gif project
+# take valid image file
+# confirm if/convert to greyscale
+# create mask for each value [0...255]
+# create gif of all masks in order to create effect
+
+# base imports
+from sys import argv
+import os
+# image imports
+import cv2
+import numpy as np
+
+# flags: 1-color, 0-greyscale, -1-alphachannel
+cvImGrey = cv2.imread(os.path.abspath(argv[1]), 0)
+
+# confirmed type is <type 'numpy.ndarray'>
+# print(type(cvImGrey))
+
+def binaryThresholdByValue(x, img):
+	'''return binary thresholded mask of pixels
+	   at value x, where x is range(0, 256)'''
+
+	if 0 <= x < 256:
+		try:
+			ret, mask = cv2.threshold(img, x, x, cv2.THRESH_BINARY)
+			return mask
+		except Exception as e:
+			print "Error: {}".format(e)
+		
+
+	return None
+
+def getArrayOfThresholdMasks(img):
+	'''returns array of masks'''
+
+	return np.ndarray((256,), dtype=type(img),
+		              buffer=np.array([binaryThresholdByValue(x, img) for x in range(256)]))
+
+
+thresholds = getArrayOfThresholdMasks(cvImGrey)
+
+print "Number of objects in thresholds: {}".format(thresholds.size)
+
+# cv2.imshow("Test01",cvImGrey)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
